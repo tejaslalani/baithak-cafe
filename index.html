@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="gu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Baithak Cafe - Full Final Menu</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #e67e22; --success: #27ae60; --dark: #1e272e; --wa: #25D366; }
+        body { font-family: 'Outfit', sans-serif; background: #f8f9fa; margin: 0; padding-bottom: 100px; color: var(--dark); }
+        
+        header { 
+            height: 160px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('background.jpg') no-repeat center center; 
+            background-size: cover; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px; color: white; 
+        }
+        .logo { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--primary); }
+        header h1 { margin: 0; font-size: 22px; font-weight: 800; text-align: center; flex: 1; text-shadow: 2px 2px 4px #000; }
+
+        .nav-tabs { display: flex; overflow-x: auto; gap: 8px; padding: 15px; scrollbar-width: none; position: sticky; top: 0; background: rgba(248, 249, 250, 0.95); z-index: 100; backdrop-filter: blur(10px); border-bottom: 1px solid #eee; }
+        .nav-tabs::-webkit-scrollbar { display: none; }
+        .tab { padding: 10px 18px; background: white; border-radius: 50px; white-space: nowrap; font-size: 12px; font-weight: 600; border: 1px solid #ddd; cursor: pointer; }
+        .tab.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 10px rgba(230,126,34,0.3); }
+
+        .container { padding: 0 15px; max-width: 600px; margin: auto; }
+        .cat-head { font-size: 13px; font-weight: 800; color: var(--primary); margin: 25px 0 10px; display: flex; align-items: center; gap: 10px; text-transform: uppercase; }
+        .cat-head::after { content: ""; flex: 1; height: 1px; background: #ddd; }
+        .item-card { background: white; border-radius: 18px; padding: 14px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center; border: 1px solid #f0f0f0; }
+        .item-details h4 { margin: 0; font-size: 14px; font-weight: 600; color: #333; }
+        .item-details p { margin: 4px 0 0; font-size: 14px; font-weight: 800; color: var(--primary); }
+
+        .btn-add { border: 2.5px solid var(--success); background: white; color: var(--success); padding: 7px 16px; border-radius: 10px; font-weight: 800; font-size: 11px; cursor: pointer; }
+        .qty-ctrl { display: flex; align-items: center; background: var(--success); color: white; border-radius: 10px; overflow: hidden; }
+        .qty-ctrl button { border: none; background: transparent; color: white; width: 32px; height: 35px; font-size: 18px; font-weight: 800; cursor: pointer; }
+        .qty-ctrl span { width: 22px; text-align: center; font-weight: 800; }
+
+        .cart-bar { position: fixed; bottom: 15px; left: 15px; right: 15px; background: var(--dark); color: white; padding: 16px 20px; border-radius: 22px; display: none; justify-content: space-between; align-items: center; z-index: 999; }
+        .overlay { position: fixed; inset: 0; background: white; z-index: 1000; display: none; padding: 25px; overflow-y: auto; }
+        .opt-btn { width: 100%; padding: 18px; margin-bottom: 12px; background: #fff; border: 2px solid #f0f0f0; border-radius: 15px; font-weight: 600; display: flex; justify-content: space-between; }
+        .wa-btn { width: 100%; background: var(--wa); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: 800; font-size: 16px; margin-top: 10px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<header>
+    <img src="logo.jpg.jpeg" class="logo" onerror="this.src='https://via.placeholder.com/60'">
+    <h1>BAITHAK CAFE</h1>
+    <img src="logo.jpg.jpeg" class="logo" onerror="this.src='https://via.placeholder.com/60'">
+</header>
+
+<div class="nav-tabs">
+    <div class="tab active" onclick="filterCat('all', this)">🔥 All</div>
+    <div class="tab" onclick="filterCat('ICE CREAM', this)">🍦 Ice Cream</div>
+    <div class="tab" onclick="filterCat('CHAA & COFFEE', this)">☕ Chaa & Coffee</div>
+    <div class="tab" onclick="filterCat('MASALA', this)">🍃 Masala</div>
+    <div class="tab" onclick="filterCat('CIGARETTES', this)">🚬 Cigarettes</div>
+    <div class="tab" onclick="filterCat('CHIPS', this)">🍟 Chips</div>
+    <div class="tab" onclick="filterCat('DRINKS', this)">🥤 Drinks</div>
+</div>
+
+<div class="container" id="menuArea"></div>
+
+<div class="cart-bar" id="cartBar" onclick="openBill()">
+    <div><span id="qTotal">0</span> Items | ₹<span id="aTotal">0</span></div>
+    <div style="font-weight: 800;">ORDER JUO &rarr;</div>
+</div>
+
+<div class="overlay" id="billOverlay">
+    <button onclick="closeBill()" style="float:right; border:none; background:none; font-size:35px;">&times;</button>
+    <h2 style="margin-top:50px;">Order Summary</h2>
+    <div id="billItems"></div>
+    <div style="display:flex; justify-content:space-between; font-size:22px; font-weight:800; border-top:2px solid #eee; padding-top:20px; margin-top:15px;">
+        <span>Total:</span><span>₹<span id="finalAmt">0</span></span>
+    </div>
+    <div id="payArea" style="text-align:center; margin-top:20px;">
+        <img src="qr.jpg.jpeg" style="width:180px; border-radius:15px; border:1px solid #ddd;">
+        <button onclick="showToken()" style="width:100%; background:var(--success); color:white; padding:18px; border:none; border-radius:15px; font-weight:800; margin-top:20px;">I HAVE PAID - GET TOKEN</button>
+    </div>
+    <div id="tokenArea" style="display:none; text-align:center;">
+        <div style="background:#fff4e6; border:2px dashed var(--primary); padding:20px; border-radius:15px; margin:20px 0;">
+            <h1 id="tokenNum" style="font-size:45px; color:var(--primary); margin:0;">#---</h1>
+            <p style="color:red; font-weight:800;">SS Sathe WhatsApp Karo!</p>
+        </div>
+        <button onclick="sendWA()" class="wa-btn">SEND TO WHATSAPP</button>
+    </div>
+</div>
+
+<div class="overlay" id="optOverlay">
+    <h2 style="text-align:center;">પસંદ કરો</h2>
+    <div id="optList"></div>
+    <button onclick="closeOpt()" style="width:100%; margin-top:10px; border:none; background:none; color:#888;">CANCEL</button>
+</div>
+
+<script>
+    const PHONE = "919316292039";
+    let currentCat = "all";
+    let cart = {};
+
+    const menuData = {
+        "🍦 ICE CREAM - TUBS & CAKES": [
+            ["Choco Brownie (700+700ml)", 330], ["Choco Brownie Combo", 320], ["Rajwadi Kulfi (750ml)", 300], ["Sitafal (500ml)", 220], ["Chocolate Tub (500ml)", 150], ["American Nuts (500ml)", 150], ["American Mud Cake (750ml)", 290], ["Mud Cake Ice Cream Cake", 360], ["Red Velvet Heart Cake", 320], ["Black Forest (1L)", 650], ["Golden Fantasy (1L)", 650], ["Italian Cassata", 320], ["Cassata Slice", 65]
+        ],
+        "🍦 ICE CREAM - CONES & KULFI": [
+            ["Choco Black Brownie Cone", 99], ["Belgian Silky Cone", 60], ["butter scotch Cone", 30],["Dark Chocolate Cone", 50], ["Kesar Pista Cone", 45], ["Matka Kulfi", 60], ["Rajbhog Kulfi", 30], ["Malai Kulfi", 40], ["Dry Fruit Kulfi", 40], ["Shahi Kulfi", 25], ["Badam Kulfi", 20]
+        ],
+        "🍦 ICE CREAM - CANDY & STICKS": [
+            ["Triple Chocolate Stick", 70], ["Almond Mocha Stick", 60], ["Choco Bar Stick", 60], ["Oreo Sandwich", 70],  ["zulu bar", 45],["choco bar", 20], ["Crunchy Cone", 40], ["Mango Dolly", 20], ["Raspberry Dolly", 20], ["Choco Shots (10 pcs)", 100], ["Sandwich Ice Cream", 35]
+        ],
+        "☕ CHAA & COFFEE": [
+            ["Special Cha", 20], ["Coffee", 30], ["Nescafe Coffee (Hot)", 50], ["Hot Bournvita", 40], ["Nescafe Cold Coffee", 70]
+        ],
+        "🍃 MASALA & GUTKA": [
+            ["Masalo (Select Pouch)", "OPT", "masalo"],
+            ["Rajnigandha Single", 10], ["rajnigandha", 20], ["00", 5], ["00", 6],["M Tamaku", 12],["silver", 7], ["RMD Single", 12], ["Vimal", 5], ["Tansen", 7], ["Saffron", 10], ["Baba Sopari", "OPT", "sopari"]
+        ],
+        "🚬 CIGARETTES": [
+            ["Marbolo Advance", 30], ["Marbolo Double Switch", 30], ["Marbolo Hard", 30], ["Marbolo Lite", 30], ["Marbolo Clowmix", 30], ["Marbolo Vista", 30], ["Marbolo Small Advance", 18], ["Classic Mild", 30], ["Classic Regular", 30], ["Classic Connect", 30], ["Classic Double Burst", 30], ["Gold Flake King", 30], ["Gold Flake Lite", 18], ["Gold Flake Small", 18], ["Indimint", 18], ["Benson", 30], ["Wills", 18], ["Four Square", 15], ["White Crush", 15], ["Black Crush", 15], ["Tropical", 15], ["Variyali", 15], ["Stellar Shift", 25]
+        ],
+        "🍟 CHIPS (BALAJI/LAYS)": [
+            ["Balaji Masala Waffer", 10], ["Balaji Salted", 10], ["Balaji Tomato", 10], ["Balaji Chat Chaska", 10], ["Balaji Cream Onion", 10], ["Balaji Bizzy", 10], ["Crunchex Masala", 10], ["Rumbles Fudina", 10], ["Masala Nachos", 10], ["Cheese Nachos", 10], ["Banana Waffer", 10], ["Lays Masala", 10], ["Lays Cream Onion", 10], ["Kurkure Masala Munch", 10], ["Tikho Chevdo", 10], ["Ratlami Sev", 10], ["Alu Sev", 10], ["claasic sev", 10] , ["tikha sev mamara", 10], ["mora sev mamra", 10], ["bites bhel mix", 10], ["doritoz sweet chilly", 10], ["doritoz nacho cheese", 10], ["cheese popring", 10], ["masala popring", 10], ["solid masti", 10], ["uncle chips", 10], ["wheels", 10], ["masala sing", 10], ["chataka pataka", 10], ["chilly chatka", 10], ["kurkure green chilly", 10]
+        ],
+        "🥤 DRINKS (COLD & ENERGY)": [
+            ["Water Bottle", "OPT", "water"],
+            ["Monster Energy (Original)", 125], ["Monster Ultra (White)", 125], ["bagera", 20], ["Red Bull", 125], ["Hell Energy", 60], ["Hell watermelon", 60], ["Sting Energy", 20], 
+            ["Thumsup Cane", 40], ["Coca Cola Cane", 40], ["Sprite Cane", 40],  
+            ["Thumsup (250ml)", 20], ["Coca Cola (250ml)", 20], ["Sprite (250ml)", 20], ["Limca (250ml)", 20], ["Jeeru Bottle", 10], ["Frooti (Small)", 10]
+        ]
+    };
+
+    const subOptions = {
+        masalo: [
+            ["Vinar Pouch", 25], ["Babu Pouch", 25], ["Chamunda Pouch", 25], 
+            ["Siddharth Pouch", 25], ["Ganesh Pouch", 25], ["Mobile Pouch", 25], ["Pichhdo Pouch", 25]
+        ],
+        sopari: [["Baba Sopari ₹2", 2], ["Baba Sopari ₹5", 5], ["Baba Sopari ₹10", 10]],
+        water: [["Water Bottle ₹10", 10], ["Water Bottle ₹20", 20]]
+    };
+
+    function render() {
+        let html = '';
+        for (let cat in menuData) {
+            if (currentCat !== 'all' && !cat.includes(currentCat)) continue;
+            html += `<div class="cat-head">${cat}</div>`;
+            menuData[cat].forEach((item, idx) => {
+                let id = cat.replace(/[^a-z0-9]/gi, '') + idx;
+                let btn = item[1] === "OPT" ? 
+                    `<button class="btn-add" onclick="openOpt('${item[2]}')">OPTIONS</button>` :
+                    (cart[id] ? `<div class="qty-ctrl"><button onclick="upd('${id}',-1,'${item[0]}',${item[1]})">−</button><span>${cart[id].qty}</span><button onclick="upd('${id}',1,'${item[0]}',${item[1]})">+</button></div>` : 
+                    `<button class="btn-add" onclick="upd('${id}',1,'${item[0]}',${item[1]})">ADD</button>`);
+                html += `<div class="item-card"><div class="item-details"><h4>${item[0]}</h4><p>${item[1]==="OPT"?"વિકલ્પ જુઓ":"₹"+item[1]}</p></div><div>${btn}</div></div>`;
+            });
+        }
+        document.getElementById('menuArea').innerHTML = html;
+    }
+
+    function upd(id, delta, name, price) {
+        if (!cart[id]) cart[id] = { qty: 0, name: name, price: price };
+        cart[id].qty += delta;
+        if (cart[id].qty <= 0) delete cart[id];
+        let q = 0, a = 0;
+        for (let k in cart) { q += cart[k].qty; a += cart[k].qty * cart[k].price; }
+        document.getElementById('cartBar').style.display = q > 0 ? 'flex' : 'none';
+        document.getElementById('qTotal').innerText = q;
+        document.getElementById('aTotal').innerText = a;
+        render();
+    }
+
+    function openOpt(type) {
+        let h = '';
+        subOptions[type].forEach(o => {
+            let optId = o[0].replace(/[^a-z0-9]/gi, '');
+            h += `<button class="opt-btn" onclick="upd('${optId}',1,'${o[0]}',${o[1]});closeOpt()"><span>${o[0]}</span> <span>₹${o[1]}</span></button>`;
+        });
+        document.getElementById('optList').innerHTML = h;
+        document.getElementById('optOverlay').style.display = 'block';
+    }
+
+    function filterCat(c, el) {
+        currentCat = c;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        el.classList.add('active');
+        render();
+    }
+
+    function openBill() {
+        let h = '', total = 0;
+        for (let k in cart) {
+            total += cart[k].qty * cart[k].price;
+            h += `<div style="display:flex; justify-content:space-between; padding:10px 0; border-bottom:1px solid #eee;"><span>${cart[k].name} (x${cart[k].qty})</span><span>₹${cart[k].qty * cart[k].price}</span></div>`;
+        }
+        document.getElementById('billItems').innerHTML = h;
+        document.getElementById('finalAmt').innerText = total;
+        document.getElementById('billOverlay').style.display = 'block';
+    }
+
+    function showToken() {
+        // Updated Token display to match your requirement BK-XXX
+        let randNum = Math.floor(100 + Math.random() * 900);
+        document.getElementById('tokenNum').innerText = "BK-" + randNum;
+        document.getElementById('payArea').style.display = 'none';
+        document.getElementById('tokenArea').style.display = 'block';
+    }
+
+    function sendWA() {
+        const token = document.getElementById('tokenNum').innerText;
+        const totalAmt = document.getElementById('finalAmt').innerText;
+        
+        // --- WhatsApp Auto Message Formatting ---
+        let msg = `New Order - Token: ${token}%0A`;
+        msg += `--------------------------%0A`;
+        
+        for (let k in cart) {
+            msg += `• ${cart[k].name} x ${cart[k].qty}%0A`;
+        }
+        
+        msg += `--------------------------%0A`;
+        msg += `Total: ₹${totalAmt}%0A`;
+        msg += `--------------------------%0A`;
+        msg += `Order confirmed from Digital Menu.`;
+
+        window.open(`https://wa.me/${PHONE}?text=${msg}`, '_blank');
+        location.reload();
+    }
+
+    function closeOpt() { document.getElementById('optOverlay').style.display = 'none'; }
+    function closeBill() { document.getElementById('billOverlay').style.display = 'none'; }
+    
+    window.onload = render;
+</script>
+</body>
+</html>
